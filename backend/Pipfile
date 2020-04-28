@@ -11,6 +11,7 @@ flake8 = "*"
 black = "*"
 hacking = "*"
 flake8-bugbear = "*"
+coverage = "*"
 
 [packages]
 fastapi = "*"
@@ -21,7 +22,6 @@ databases = "*"
 gunicorn = "*"
 toml = "*"
 asyncpg = "*"
-coverage = "*"
 
 [requires]
 python_version = "3.8"
