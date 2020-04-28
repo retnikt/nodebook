@@ -1,0 +1,30 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pytest = "*"
+isort = {extras = ["pipfile"], version = "*"}
+mypy = "*"
+flake8 = "*"
+black = "*"
+hacking = "*"
+flake8-bugbear = "*"
+
+[packages]
+fastapi = "*"
+email-validator = "*"
+uvicorn = "*"
+orjson = "*"
+databases = "*"
+gunicorn = "*"
+toml = "*"
+asyncpg = "*"
+coverage = "*"
+
+[requires]
+python_version = "3.8"
+
+[pipenv]
+allow_prereleases = true

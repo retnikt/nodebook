@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  backend:
+    volumes:
+      # mount app directory to allow live-reloading
+      - "./backend:/app"
+    command:
+      # run with uvicorn with reload instead of gunicorn with workers
+      - "uvicorn"
+      - "--reload"
+      - "--port=80"
+      - "--host=0.0.0.0"
+      - "notebook:app"
+      - "--debug"
