@@ -2,9 +2,10 @@
 Copyright © retnikt <_@retnikt.uk> 2020
 This software is licensed under the MIT Licence: https://opensource.org/licenses/MIT
 """
-from typing import TYPE_CHECKING, List
+import secrets
+from typing import TYPE_CHECKING, List, Union
 
-from pydantic import AnyHttpUrl, BaseSettings, stricturl
+from pydantic import AnyHttpUrl, BaseSettings, Field, stricturl
 
 if TYPE_CHECKING:
     _PostgresURL = str
@@ -16,9 +17,21 @@ else:
     )
 
 
+class _UniversalSet:
+    """(psuedo)-universal set - contains everything"""
+
+    def __contains__(self, item):
+        return True
+
+
+UNIVERSAL_SET = _UniversalSet()
+
+
 class _Settings(BaseSettings):
     dsn: _PostgresURL = "postgres://postgresql/notebook"
     cors_origins: List[AnyHttpUrl] = []
+    rocpf_origins: Union[_UniversalSet, List[str]] = Field(UNIVERSAL_SET)
+    secret_key: str = secrets.token_urlsafe(40)
 
     class Config:
         env_prefix: str = "notebook_"
