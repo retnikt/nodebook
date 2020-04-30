@@ -46,7 +46,13 @@ class JWTScheme(OAuth2):
                 403, "not authenticated", headers=WWW_AUTHENTICATE_HEADERS
             )
         try:
-            return jwt.decode(token, algorithms=[ALGORITHM], key=settings.secret_key, issuer=ISSUER, audience=AUDIENCE)
+            return jwt.decode(
+                token,
+                algorithms=[ALGORITHM],
+                key=settings.secret_key,
+                issuer=ISSUER,
+                audience=AUDIENCE,
+            )
         except jwt.exceptions.ExpiredSignatureError as e:
             raise HTTPException(
                 403, "token expired", headers=WWW_AUTHENTICATE_HEADERS
@@ -246,13 +252,11 @@ async def ropcf(request: Request, form: OAuth2ROPCFForm = oauth_2_ropcf_form):
 
 @router.post("/refresh", response_model=OAuth2ROPCFSuccessResponse)
 async def refresh_token(token=Depends(oauth2_scheme)):
-    token.update({
-        "iat": (now := time.time()),
-        "nbf": now,
-        "exp": now + EXPIRY,
-    })
+    token.update({"iat": (now := time.time()), "nbf": now, "exp": now + EXPIRY})
     return {
-        "access_token": jwt.encode(token, key=settings.secret_key, algorithm=ALGORITHM).decode(),
+        "access_token": jwt.encode(
+            token, key=settings.secret_key, algorithm=ALGORITHM
+        ).decode(),
         "token_type": "bearer",
         "scope": " ".join(token["scope"]),
         "expires_in": EXPIRY,
