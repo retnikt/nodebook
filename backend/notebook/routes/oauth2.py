@@ -5,14 +5,14 @@ This software is licensed under the MIT Licence: https://opensource.org/licenses
 import time
 from typing import Literal
 
-import argon2  # type: ignore
-import jwt.exceptions  # type: ignore
-import pydantic
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.openapi.models import OAuthFlowPassword, OAuthFlows
 from fastapi.responses import ORJSONResponse
 from fastapi.security.oauth2 import OAuth2
 
+import argon2  # type: ignore
+import jwt.exceptions  # type: ignore
+import pydantic
 from notebook.settings import settings
 
 ALGORITHM = "HS256"
@@ -20,7 +20,7 @@ ALGORITHM = "HS256"
 ISSUER = "notebook"
 AUDIENCE = "notebook"
 
-WWW_AUTHENTICATE_HEADERS = {"www-authenticate": "bearer"}
+WWW_AUTHENTICATE_HEADERS = {"www-authenticate": "Bearer"}
 
 router = APIRouter()
 
@@ -43,7 +43,7 @@ class JWTScheme(OAuth2):
         token_type, _, token = header.partition(" ")
         if token_type.casefold() != "bearer" or not token:
             raise HTTPException(
-                403, "not authenticated", headers=WWW_AUTHENTICATE_HEADERS
+                401, "not authenticated", headers=WWW_AUTHENTICATE_HEADERS
             )
         try:
             return jwt.decode(
@@ -54,11 +54,9 @@ class JWTScheme(OAuth2):
                 audience=AUDIENCE,
             )
         except jwt.exceptions.ExpiredSignatureError as e:
-            raise HTTPException(
-                403, "token expired", headers=WWW_AUTHENTICATE_HEADERS
-            ) from e
+            raise HTTPException(403, "token expired") from e
         except jwt.exceptions.PyJWTError as e:
-            raise HTTPException(400, str(e), headers=WWW_AUTHENTICATE_HEADERS) from e
+            raise HTTPException(400, str(e)) from e
 
 
 oauth2_scheme = JWTScheme()
@@ -181,7 +179,7 @@ async def oauth_2_ropcf_form(request: Request) -> OAuth2ROPCFForm:
             "description": "Unsuccessful response per [RFC 6749.5.2](https://tools.ietf.org/html/rfc6749#section-5.2) (invalid request, scope, or grant type)",
             "model": OAuth2ROPCFInvalidResponse,
         },
-        401: {
+        403: {
             "description": "Unsuccessful response per [RFC 6749.5.2](https://tools.ietf.org/html/rfc6749#section-5.2) (incorrect email/password or unauthorized client)",
             "model": OAuth2ROPCFIncorrectResponse,
         },
@@ -204,11 +202,12 @@ async def ropcf(request: Request, form: OAuth2ROPCFForm = oauth_2_ropcf_form):
                 "error": "invalid_client",
                 "error_description": "this origin is not allowed to perform the ROPCF authentication flow",
             },
+            headers=WWW_AUTHENTICATE_HEADERS,
         )
 
     if form.email != EMAIL:
         raise HTTPException(
-            401,
+            400,
             {
                 "error": "invalid_grant",
                 "error_description": "incorrect email address or password",
@@ -219,7 +218,7 @@ async def ropcf(request: Request, form: OAuth2ROPCFForm = oauth_2_ropcf_form):
         password_hasher.verify(hash=PASSWORD, password=form.password)
     except argon2.exceptions.VerifyMismatchError as e:
         raise HTTPException(
-            401,
+            400,
             {
                 "error": "invalid_grant",
                 "error_description": "incorrect email address or password",
