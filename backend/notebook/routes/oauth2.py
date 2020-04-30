@@ -5,15 +5,17 @@ This software is licensed under the MIT Licence: https://opensource.org/licenses
 import time
 from typing import Literal
 
+import argon2  # type: ignore
+import jwt.exceptions  # type: ignore
+import pydantic
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.openapi.models import OAuthFlowPassword, OAuthFlows
 from fastapi.responses import ORJSONResponse
 from fastapi.security.oauth2 import OAuth2
 
-import argon2  # type: ignore
-import jwt.exceptions  # type: ignore
-import pydantic
 from notebook.settings import settings
+
+NO_CACHE_HEADERS = {"cache-control": "no-store", "pragma": "no-cache"}
 
 ALGORITHM = "HS256"
 
@@ -54,9 +56,9 @@ class JWTScheme(OAuth2):
                 audience=AUDIENCE,
             )
         except jwt.exceptions.ExpiredSignatureError as e:
-            raise HTTPException(403, "token expired") from e
+            raise HTTPException(403, "token expired", headers=NO_CACHE_HEADERS) from e
         except jwt.exceptions.PyJWTError as e:
-            raise HTTPException(400, str(e)) from e
+            raise HTTPException(400, str(e), headers=NO_CACHE_HEADERS) from e
 
 
 oauth2_scheme = JWTScheme()
@@ -159,6 +161,7 @@ async def oauth_2_ropcf_form(request: Request) -> OAuth2ROPCFForm:
                 "error": "invalid_request",
                 "error_description": "request must include username, password",
             },
+            headers=NO_CACHE_HEADERS,
         ) from e
     if form.grant_type != "password":
         raise HTTPException(
@@ -167,6 +170,7 @@ async def oauth_2_ropcf_form(request: Request) -> OAuth2ROPCFForm:
                 "error": "unsupported_grant",
                 "error_description": "only grant_type of 'password' is supported",
             },
+            headers=NO_CACHE_HEADERS,
         )
     return form
 
@@ -212,6 +216,7 @@ async def ropcf(request: Request, form: OAuth2ROPCFForm = oauth_2_ropcf_form):
                 "error": "invalid_grant",
                 "error_description": "incorrect email address or password",
             },
+            headers=NO_CACHE_HEADERS,
         )
 
     try:
@@ -223,6 +228,7 @@ async def ropcf(request: Request, form: OAuth2ROPCFForm = oauth_2_ropcf_form):
                 "error": "invalid_grant",
                 "error_description": "incorrect email address or password",
             },
+            headers=NO_CACHE_HEADERS,
         ) from e
 
     scope = ["user/read", "user/write"]
@@ -245,18 +251,21 @@ async def ropcf(request: Request, form: OAuth2ROPCFForm = oauth_2_ropcf_form):
             "scope": " ".join(scope),  # RFC 6749.3.3
             "expires_in": EXPIRY,
         },
-        headers={"cache-control": "no-store", "pragma": "no-cache"},
+        headers=NO_CACHE_HEADERS,
     )
 
 
 @router.post("/refresh", response_model=OAuth2ROPCFSuccessResponse, tags=["OAuth2"])
 async def refresh_token(token=Depends(oauth2_scheme)):
     token.update({"iat": (now := time.time()), "nbf": now, "exp": now + EXPIRY})
-    return {
-        "access_token": jwt.encode(
-            token, key=settings.secret_key, algorithm=ALGORITHM
-        ).decode(),
-        "token_type": "bearer",
-        "scope": " ".join(token["scope"]),
-        "expires_in": EXPIRY,
-    }
+    return ORJSONResponse(
+        {
+            "access_token": jwt.encode(
+                token, key=settings.secret_key, algorithm=ALGORITHM
+            ).decode(),
+            "token_type": "bearer",
+            "scope": " ".join(token["scope"]),
+            "expires_in": EXPIRY,
+        },
+        headers=NO_CACHE_HEADERS,
+    )
