@@ -201,12 +201,12 @@ async def ropcf(request: Request, form: OAuth2ROPCFForm = oauth_2_ropcf_form):
     origin = request.headers.get("Origin")
     if not origin or origin not in settings.rocpf_origins:
         raise HTTPException(
-            401,
+            400,
             {
                 "error": "invalid_client",
                 "error_description": "this origin is not allowed to perform the ROPCF authentication flow",
             },
-            headers=WWW_AUTHENTICATE_HEADERS,
+            headers=NO_CACHE_HEADERS,
         )
 
     if form.email != EMAIL:

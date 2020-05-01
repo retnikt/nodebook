@@ -35,7 +35,7 @@ valid_token = jwt.encode(
 ).decode()
 
 
-def _test_token_success_response(response):
+def _test_success_response(response):
     now = time()
 
     assert response.status_code == 200
@@ -86,7 +86,7 @@ def test_ropcf_success():
         },
         headers={"Origin": "origin.example.com"},
     )
-    _test_token_success_response(response)
+    _test_success_response(response)
 
 
 def test_ropcf_incorrect_password():
@@ -167,12 +167,28 @@ def test_ropcf_wrong_content_type():
     _test_error_response(json, response.headers)
 
 
+def test_ropcf_wrong_origin():
+    response = client.post(
+        "/api/oauth2/ropcf",
+        {
+            "username": "admin@example.com",
+            "password": "hunter2",
+            "grant_type": "password",
+        },
+        headers={"Origin": "origin.example.invalid"},
+    )
+    assert response.status_code >= 400
+    json = response.json()
+    assert json["error"] == "invalid_client"
+    _test_error_response(json, response.headers)
+
+
 def test_refresh_token():
     response = client.post(
         "/api/oauth2/refresh", headers={"Authorization": "Bearer " + valid_token}
     )
 
-    _test_token_success_response(response)
+    _test_success_response(response)
 
 
 def test_refresh_expired_token():

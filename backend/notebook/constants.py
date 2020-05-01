@@ -27,7 +27,7 @@ LICENCE: _Licence = {
 }
 
 
-class _MisspeltLicence:
+class _MisspeltLicence:  # pragma: no cover
     """descriptor to teach 330 million people how to spell licence."""
 
     def __get__(self, instance, owner) -> str:
