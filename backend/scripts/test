@@ -5,4 +5,4 @@ coverage run --source=./notebook -m pytest
 # generate html report
 coverage html
 # open html report
-python -m webbrowser -t "file://$(pwd)/htmlcov/index.html" >/dev/null 1>&2
+python -m webbrowser -t "file://$(pwd)/htmlcov/index.html" >/dev/null 2>&1
