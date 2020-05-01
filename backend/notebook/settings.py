@@ -26,7 +26,7 @@ UNIVERSAL_SET = _UniversalSet()
 
 
 class _Settings(BaseSettings):
-    dsn: _PostgresURL = "postgresql://postgresql/notebook"
+    dsn: _PostgresURL = "postgresql://db/notebook"
     cors_origins: List[AnyHttpUrl] = []
     rocpf_origins: Union[_UniversalSet, List[str]] = Field(UNIVERSAL_SET)
     secret_key: str = secrets.token_urlsafe(40)
