@@ -119,7 +119,7 @@ class OAuth2ErrorResponse(pydantic.BaseModel):
     )
     error_uri: Optional[str] = pydantic.Field(
         description="provides a reference URI to give details about the error",
-        example="https://example.com/"
+        example="https://example.com/",
     )
 
 
