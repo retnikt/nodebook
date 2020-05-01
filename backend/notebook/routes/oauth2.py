@@ -3,7 +3,7 @@ Copyright © retnikt <_@retnikt.uk> 2020
 This software is licensed under the MIT Licence: https://opensource.org/licenses/MIT
 """
 import time
-from typing import Literal
+from typing import Literal, Optional
 
 import argon2  # type: ignore
 import jwt.exceptions  # type: ignore
@@ -85,7 +85,7 @@ EXAMPLE_JWT = jwt.encode(
 del now
 
 
-class OAuth2ROPCFSuccessResponse(pydantic.BaseModel):
+class OAuth2SuccessResponse(pydantic.BaseModel):
     """models a successful response to an OAuth2 Resource Owner Password Credentials Flow request"""
 
     access_token: str = pydantic.Field(
@@ -106,29 +106,20 @@ class OAuth2ROPCFSuccessResponse(pydantic.BaseModel):
     )
 
 
-class OAuth2ROPCFInvalidResponse(pydantic.BaseModel):
+class OAuth2ErrorResponse(pydantic.BaseModel):
     """models an unsuccessful response to an OAuth2 Resource Owner Password Credentials Flow request due to a malformed request"""
 
     error: str = pydantic.Field(
         description="indicates the type of error as described in [RFC 6749.5.2](https://tools.ietf.org/html/rfc6749#section-5.2)",
         example="invalid_request",
     )
-    error_description: str = pydantic.Field(
+    error_description: Optional[str] = pydantic.Field(
         description="provides a short human-readable explanation of the error",
-        example="only grant_type of 'password' is supported",
+        example="incorrect email/password",
     )
-
-
-class OAuth2ROPCFIncorrectResponse(pydantic.BaseModel):
-    """models an unsuccessful response to an OAuth2 Resource Owner Password Credentials Flow request due to incorrect or invalid credentials"""
-
-    error: str = pydantic.Field(
-        description="indicates the type of error as described in [RFC 6749.5.2](https://tools.ietf.org/html/rfc6749#section-5.2)",
-        example="invalid_grant",
-    )
-    error_description: str = pydantic.Field(
-        description="provides a short human-readable explanation of the error",
-        example="incorrect email address or password",
+    error_uri: Optional[str] = pydantic.Field(
+        description="provides a reference URI to give details about the error",
+        example="https://example.com/"
     )
 
 
@@ -180,15 +171,11 @@ async def oauth_2_ropcf_form(request: Request) -> OAuth2ROPCFForm:
     summary="OAuth2 Resource Owner Password Credentials Flow",
     responses={
         400: {
-            "description": "Unsuccessful response per [RFC 6749.5.2](https://tools.ietf.org/html/rfc6749#section-5.2) (invalid request, scope, or grant type)",
-            "model": OAuth2ROPCFInvalidResponse,
-        },
-        403: {
-            "description": "Unsuccessful response per [RFC 6749.5.2](https://tools.ietf.org/html/rfc6749#section-5.2) (incorrect email/password or unauthorized client)",
-            "model": OAuth2ROPCFIncorrectResponse,
+            "description": "Unsuccessful response per [RFC 6749.5.2](https://tools.ietf.org/html/rfc6749#section-5.2)",
+            "model": OAuth2ErrorResponse,
         },
     },
-    response_model=OAuth2ROPCFSuccessResponse,
+    response_model=OAuth2SuccessResponse,
     response_description="Successful response per [RFC 6749.5.1](https://tools.ietf.org/html/rfc6749#section-5.1)",
     tags=["OAuth2"],
 )
@@ -196,7 +183,7 @@ async def ropcf(request: Request, form: OAuth2ROPCFForm = oauth_2_ropcf_form):
     """Implements OAuth 2 Resource Owner Password Credentials Flow, per RFC 6749.4.3"""
 
     # limit access to only specifically allowed origins
-    # note that this security feature only works on websites - outside a browser, this
+    # note that this security feature only works on websites; outside a browser, this
     # can be easily bypassed
     origin = request.headers.get("Origin")
     if not origin or origin not in settings.rocpf_origins:
@@ -255,7 +242,7 @@ async def ropcf(request: Request, form: OAuth2ROPCFForm = oauth_2_ropcf_form):
     )
 
 
-@router.post("/refresh", response_model=OAuth2ROPCFSuccessResponse, tags=["OAuth2"])
+@router.post("/refresh", response_model=OAuth2SuccessResponse, tags=["OAuth2"])
 async def refresh_token(token=Depends(oauth2_scheme)):
     token.update({"iat": (now := time.time()), "nbf": now, "exp": now + EXPIRY})
     return ORJSONResponse(
