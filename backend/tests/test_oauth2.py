@@ -46,7 +46,7 @@ def _test_success_response(response):
 
     token = json["access_token"]
     decoded = jwt.decode(
-        token, key=settings.secret_key, audience=AUDIENCE, issuer=ISSUER
+        token, key=settings.secret_key, audience=AUDIENCE, issuer=ISSUER, algorithms=[ALGORITHM]
     )
     assert decoded["sub"] == "admin@example.com"
     assert decoded["scope"] == scope.split(" ")
