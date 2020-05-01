@@ -18,7 +18,9 @@ async def http_exception_handler(_request, exception: HTTPException):
     """custom handler for HTTPExceptions allowing more flexibility:
     instead of returning { "detail": detail } we just return the detail as JSON
     """
-    return ORJSONResponse(exception.detail, status_code=exception.status_code, headers=exception.headers)
+    return ORJSONResponse(
+        exception.detail, status_code=exception.status_code, headers=exception.headers
+    )
 
 
 app.add_api_route("/api/", app.redoc_route(), include_in_schema=False)
