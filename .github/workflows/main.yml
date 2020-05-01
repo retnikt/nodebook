@@ -49,10 +49,13 @@ jobs:
 
     - name: pytest
       working-directory: backend
-      run: pipenv run coverage run --source=./notebook -m pytest
+      run: |
+        pipenv run coverage run --source=./notebook -m pytest
+        pipenv run coverage xml
       
     # upload code coverage report to codecov.io
     - name: codecov
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./backend/coverage.xml
