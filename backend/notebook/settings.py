@@ -11,9 +11,7 @@ if TYPE_CHECKING:
     _PostgresURL = str
 else:
     _PostgresURL = stricturl(
-        strip_whitespace=True,
-        tld_required=False,
-        allowed_schemes={"postgresql", "postgres"},
+        strip_whitespace=True, tld_required=False, allowed_schemes={"postgresql"},
     )
 
 
@@ -28,7 +26,7 @@ UNIVERSAL_SET = _UniversalSet()
 
 
 class _Settings(BaseSettings):
-    dsn: _PostgresURL = "postgres://postgresql/notebook"
+    dsn: _PostgresURL = "postgresql://postgresql/notebook"
     cors_origins: List[AnyHttpUrl] = []
     rocpf_origins: Union[_UniversalSet, List[str]] = Field(UNIVERSAL_SET)
     secret_key: str = secrets.token_urlsafe(40)
