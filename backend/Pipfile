@@ -12,6 +12,7 @@ black = "*"
 hacking = "*"
 flake8-bugbear = "*"
 coverage = "*"
+sqlalchemy-stubs = "*"
 
 [packages]
 fastapi = "*"
