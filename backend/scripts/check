@@ -2,5 +2,5 @@
 
 mypy .
 flake8
-isort --diff
+isort -c
 black --check .
