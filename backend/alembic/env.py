@@ -12,6 +12,7 @@ if True:
 
     sys.path.insert(0, os.getcwd())
     import notebook.settings
+    import notebook.database
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -21,7 +22,7 @@ fileConfig(context.config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = notebook.database.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
