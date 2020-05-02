@@ -1,16 +1,17 @@
+import os
 from logging.config import fileConfig
 
 from sqlalchemy import create_engine
 
 from alembic import context
 
-# alembic "helpfully" removes the current working directory from sys.path, preventing us
-# from finding our own package!
-import sys
-import os
-sys.path.insert(0, os.getcwd())
+if True:
+    # alembic "helpfully" removes the current working directory from sys.path, preventing us
+    # from finding our own package!
+    import sys
 
-import notebook.settings
+    sys.path.insert(0, os.getcwd())
+    import notebook.settings
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -61,9 +62,7 @@ def run_migrations_online():
     connectable = create_engine(notebook.settings.settings.dsn)
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
