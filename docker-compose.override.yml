@@ -12,3 +12,6 @@ services:
       - "--host=0.0.0.0"
       - "notebook:app"
       - "--debug"
+  db:
+    ports:
+      - "5432:5432"
