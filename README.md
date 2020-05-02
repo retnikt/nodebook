@@ -1,6 +1,6 @@
 # Notebook
 
-![CI](https://github.com/retnikt/notebook/workflows/CI/badge.svg?branch=master)
+![Backend CI Status](https://github.com/retnikt/notebook/workflows/backend/badge.svg?branch=master)
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=retnikt/notebook)](https://dependabot.com)
 [![Code Style: Black](https://img.shields.io/badge/code_style-black-000000)](https://github.com/psf/black)
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-green)](https://opensource.org/licenses/mit-license.html)
