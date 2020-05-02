@@ -25,6 +25,8 @@ asyncpg = "*"
 argon2-cffi = "*"
 pyjwt = ">=1.0.1"
 python-multipart = "*"
+alembic = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.8"
