@@ -1,4 +1,10 @@
 # Notebook
+
+![CI](https://github.com/retnikt/notebook/workflows/CI/badge.svg?branch=master)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=retnikt/notebook)](https://dependabot.com)
+[![Code Style: Black](https://img.shields.io/badge/code_style-black-000000)](https://github.com/psf/black)
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-green)](https://opensource.org/licenses/mit-license.html)
+
 A notebook app.
 
 Notebook is free and open source software licensed under the [MIT Licence](https://opensource.org/licenses/mit-license.html).
