@@ -3,9 +3,7 @@ from time import time
 
 import jwt
 from pytest import approx
-from starlette.testclient import TestClient
 
-from notebook import app
 from notebook.routes.oauth2 import ALGORITHM, AUDIENCE, EXPIRY, ISSUER
 from notebook.settings import settings
 
@@ -18,7 +16,6 @@ with open("tests/data/uri.regex.txt") as f:
 
 settings.rocpf_origins = ["origin.example.com"]
 
-client = TestClient(app)
 now2 = time()
 valid_token = jwt.encode(
     {
@@ -80,7 +77,7 @@ def _test_error_response(json, headers):
     assert headers["cache-control"] == "no-store"
 
 
-def test_ropcf_success():
+def test_ropcf_success(client):
     response = client.post(
         "/api/oauth2/ropcf",
         {
@@ -93,7 +90,7 @@ def test_ropcf_success():
     _test_success_response(response)
 
 
-def test_ropcf_incorrect_password():
+def test_ropcf_incorrect_password(client):
     response = client.post(
         "/api/oauth2/ropcf",
         {
@@ -109,7 +106,7 @@ def test_ropcf_incorrect_password():
     _test_error_response(json, response.headers)
 
 
-def test_ropcf_incorrect_email():
+def test_ropcf_incorrect_email(client):
     response = client.post(
         "/api/oauth2/ropcf",
         {
@@ -125,7 +122,7 @@ def test_ropcf_incorrect_email():
     _test_error_response(json, response.headers)
 
 
-def test_ropcf_invalid_grant_type():
+def test_ropcf_invalid_grant_type(client):
     response = client.post(
         "/api/oauth2/ropcf",
         {
@@ -141,7 +138,7 @@ def test_ropcf_invalid_grant_type():
     _test_error_response(json, response.headers)
 
 
-def test_ropcf_missing_field():
+def test_ropcf_missing_field(client):
     data_original = {
         "username": "admin@example.com",
         "password": "password",
@@ -159,7 +156,7 @@ def test_ropcf_missing_field():
         _test_error_response(json, response.headers)
 
 
-def test_ropcf_wrong_content_type():
+def test_ropcf_wrong_content_type(client):
     response = client.post(
         "/api/oauth2/ropcf",
         "custom_data_here",
@@ -171,7 +168,7 @@ def test_ropcf_wrong_content_type():
     _test_error_response(json, response.headers)
 
 
-def test_ropcf_wrong_origin():
+def test_ropcf_wrong_origin(client):
     response = client.post(
         "/api/oauth2/ropcf",
         {
@@ -187,7 +184,7 @@ def test_ropcf_wrong_origin():
     _test_error_response(json, response.headers)
 
 
-def test_refresh_token():
+def test_refresh_token(client):
     response = client.post(
         "/api/oauth2/refresh", headers={"Authorization": "Bearer " + valid_token}
     )
@@ -195,7 +192,7 @@ def test_refresh_token():
     _test_success_response(response)
 
 
-def test_refresh_expired_token():
+def test_refresh_expired_token(client):
     now = time()
     token = jwt.encode(
         {
@@ -218,7 +215,7 @@ def test_refresh_expired_token():
     assert response.json()
 
 
-def test_refresh_invalid_token():
+def test_refresh_invalid_token(client):
     token = "totally.invalid.token"
 
     response = client.post(
@@ -228,7 +225,7 @@ def test_refresh_invalid_token():
     assert response.json()
 
 
-def test_refresh_not_invalid_auth():
+def test_refresh_not_invalid_auth(client):
     for authorization in (
         "",
         "Bearer",
