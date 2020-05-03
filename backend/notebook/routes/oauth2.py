@@ -13,7 +13,9 @@ from fastapi.openapi.models import OAuthFlowPassword, OAuthFlows
 from fastapi.responses import ORJSONResponse
 from fastapi.security.oauth2 import OAuth2
 
+from notebook import database
 from notebook.settings import settings
+from notebook.controllers.passwords import check_password
 
 NO_CACHE_HEADERS = {"cache-control": "no-store", "pragma": "no-cache"}
 
@@ -63,11 +65,6 @@ class JWTScheme(OAuth2):
 
 oauth2_scheme = JWTScheme()
 
-
-password_hasher = argon2.PasswordHasher()
-
-EMAIL = "admin@example.com"
-PASSWORD = password_hasher.hash("hunter2")
 EXPIRY = 86400
 
 EXAMPLE_JWT = jwt.encode(
@@ -196,7 +193,11 @@ async def ropcf(request: Request, form: OAuth2ROPCFForm = oauth_2_ropcf_form):
             headers=NO_CACHE_HEADERS,
         )
 
-    if form.email != EMAIL:
+    user = await database.database.fetch_one(
+        database.users.select().where(database.users.c.email == form.email)
+    )
+
+    if not (user and await check_password(user, form.password)):
         raise HTTPException(
             400,
             {
@@ -205,18 +206,6 @@ async def ropcf(request: Request, form: OAuth2ROPCFForm = oauth_2_ropcf_form):
             },
             headers=NO_CACHE_HEADERS,
         )
-
-    try:
-        password_hasher.verify(hash=PASSWORD, password=form.password)
-    except argon2.exceptions.VerifyMismatchError as e:
-        raise HTTPException(
-            400,
-            {
-                "error": "invalid_grant",
-                "error_description": "incorrect email address or password",
-            },
-            headers=NO_CACHE_HEADERS,
-        ) from e
 
     scope = ["user/read", "user/write"]
     return ORJSONResponse(
