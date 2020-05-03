@@ -7,10 +7,18 @@ from fastapi.responses import ORJSONResponse
 
 from notebook.openapi import API
 from notebook.routes import router as api
+from notebook.database import database
 
 __all__ = ["app"]
 
-app = API(docs_url=None, redoc_url=None, openapi_url="/api/openapi.json",)
+
+app = API(
+    docs_url=None,
+    redoc_url=None,
+    openapi_url="/api/openapi.json",
+    on_startup=[database.connect],
+    on_shutdown=[database.disconnect],
+)
 
 
 @app.exception_handler(HTTPException)
