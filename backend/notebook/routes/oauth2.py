@@ -5,7 +5,6 @@ This software is licensed under the MIT Licence: https://opensource.org/licenses
 import time
 from typing import Literal, Optional
 
-import argon2  # type: ignore
 import jwt.exceptions  # type: ignore
 import pydantic
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -14,8 +13,8 @@ from fastapi.responses import ORJSONResponse
 from fastapi.security.oauth2 import OAuth2
 
 from notebook import database
-from notebook.settings import settings
 from notebook.controllers.passwords import check_password
+from notebook.settings import settings
 
 NO_CACHE_HEADERS = {"cache-control": "no-store", "pragma": "no-cache"}
 

@@ -2,10 +2,12 @@
 Copyright © retnikt <_@retnikt.uk> 2020
 This software is licensed under the MIT Licence: https://opensource.org/licenses/MIT
 """
-import argon2
 import asyncio
-from notebook.settings import settings
+
+import argon2  # type: ignore
+
 from notebook import database
+from notebook.settings import settings
 
 password_hasher = argon2.PasswordHasher(
     time_cost=settings.argon2_time_cost,
@@ -26,7 +28,9 @@ async def check_password(user, password):
 async def rehash_password(user, password):
     if password_hasher.check_needs_rehash(user["password"]):
         new_hash = password_hasher.hash(password)
-        query = database.users.update().where(database.users.c.id == user["id"]).values(
-            password=new_hash
+        query = (
+            database.users.update()
+            .where(database.users.c.id == user["id"])
+            .values(password=new_hash)
         )
         await database.database.execute(query)

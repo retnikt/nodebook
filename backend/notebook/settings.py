@@ -5,12 +5,12 @@ This software is licensed under the MIT Licence: https://opensource.org/licenses
 import secrets
 from typing import TYPE_CHECKING, List, Union
 
-from pydantic import AnyHttpUrl, BaseSettings, Field, stricturl
-from argon2 import (
-    DEFAULT_TIME_COST,
+from argon2 import (  # type: ignore
     DEFAULT_MEMORY_COST,
     DEFAULT_PARALLELISM,
+    DEFAULT_TIME_COST,
 )
+from pydantic import AnyHttpUrl, BaseSettings, Field, stricturl
 
 if TYPE_CHECKING:
     _PostgresURL = str

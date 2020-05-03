@@ -5,9 +5,9 @@ This software is licensed under the MIT Licence: https://opensource.org/licenses
 from fastapi import HTTPException
 from fastapi.responses import ORJSONResponse
 
+from notebook.database import database
 from notebook.openapi import API
 from notebook.routes import router as api
-from notebook.database import database
 
 __all__ = ["app"]
 
