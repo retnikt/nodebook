@@ -35,6 +35,7 @@ valid_token = jwt.encode(
 
 def _create_test_user(sql):
     """quick and dirty way to create a user to test logging in with.
+
     email: user@example.com
     password: hunter2
     """
