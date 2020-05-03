@@ -19,7 +19,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - uses: actions/checkout@v2
-    
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
@@ -34,25 +34,52 @@ jobs:
     - name: mypy
       working-directory: backend
       run: pipenv run mypy .
-  
+
     - name: flake8
       working-directory: backend
       run: pipenv run flake8
-  
+
     - name: isort
       working-directory: backend
-      run: pipenv run isort -c
+      run: pipenv run isort --check
 
     - name: black
       working-directory: backend
       run: pipenv run black --check .
 
+  test:
+    runs-on: ubuntu-latest
+
+    # don't waste resources running tests if linting fails
+    needs: lint
+
+    services:
+      db:
+        image: postgres:12
+        ports:
+          - 5432:5432
+        # the password can't contain special characters because it must be url-safe
+        # this password is random and not used anywhere else, so don't get any ideas!
+        env:
+          POSTGRES_PASSWORD: "ASJTSP4X0ZLIPJ3S4GDXGKYZP3VL70V7"
+          POSTGRES_USER: notebook
+
+    steps:
+    - name: set up db with alembic migrations
+      run: pipenv run alembic upgrade head
+      working-directory: backend
+      env:
+        NOTEBOOK_DSN: "postgresql://notebook:ASJTSP4X0ZLIPJ3S4GDXGKYZP3VL70V7@localhost/notebook"
+
     - name: pytest
       working-directory: backend
+      env:
+        NOTEBOOK_DSN: "postgresql://notebook:ASJTSP4X0ZLIPJ3S4GDXGKYZP3VL70V7@localhost/notebook"
+        NOTEBOOK_FORCE_ROLLBACK: "true"
       run: |
         pipenv run coverage run --source=./notebook -m pytest
         pipenv run coverage xml
-      
+
     # upload code coverage report to codecov.io
     - name: codecov
       uses: codecov/codecov-action@v1
