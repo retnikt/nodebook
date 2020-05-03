@@ -65,6 +65,19 @@ jobs:
           POSTGRES_USER: notebook
 
     steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8.x'
+
+    - name: Install dependencies
+      working-directory: backend
+      run: |
+        pip install pipenv
+        pipenv install --dev
+
     - name: set up db with alembic migrations
       run: pipenv run alembic upgrade head
       working-directory: backend
