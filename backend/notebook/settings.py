@@ -6,6 +6,11 @@ import secrets
 from typing import TYPE_CHECKING, List, Union
 
 from pydantic import AnyHttpUrl, BaseSettings, Field, stricturl
+from argon2 import (
+    DEFAULT_TIME_COST,
+    DEFAULT_MEMORY_COST,
+    DEFAULT_PARALLELISM,
+)
 
 if TYPE_CHECKING:
     _PostgresURL = str
@@ -30,6 +35,10 @@ class _Settings(BaseSettings):
     cors_origins: List[AnyHttpUrl] = []
     rocpf_origins: Union[_UniversalSet, List[str]] = Field(UNIVERSAL_SET)
     secret_key: str = secrets.token_urlsafe(40)
+    argon2_time_cost: int = DEFAULT_TIME_COST
+    argon2_memory_cost: int = DEFAULT_MEMORY_COST
+    argon2_parallelism: int = DEFAULT_PARALLELISM
+    force_rollback: bool = False
 
     class Config:
         env_prefix: str = "notebook_"

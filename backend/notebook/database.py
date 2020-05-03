@@ -10,7 +10,7 @@ from sqlalchemy.sql import text
 from notebook.settings import settings
 
 metadata = sqlalchemy.MetaData()
-database = Database(settings.dsn)
+database = Database(settings.dsn, force_rollback=settings.force_rollback)
 users = sqlalchemy.Table(
     "users",
     metadata,
