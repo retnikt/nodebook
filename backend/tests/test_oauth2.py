@@ -1,6 +1,7 @@
 import re
 from time import time
 
+import argon2
 import jwt
 from pytest import approx
 
@@ -19,7 +20,7 @@ settings.rocpf_origins = ["origin.example.com"]
 now2 = time()
 valid_token = jwt.encode(
     {
-        "sub": "admin@example.com",
+        "sub": "user@example.com",
         "iat": now2,
         "nbf": now2,
         "exp": now2 + 3600,
@@ -30,6 +31,18 @@ valid_token = jwt.encode(
     key=settings.secret_key,
     algorithm=ALGORITHM,
 ).decode()
+
+
+def _create_test_user(sql):
+    """quick and dirty way to create a user to test logging in with.
+    email: user@example.com
+    password: hunter2
+    """
+    sql(
+        "INSERT INTO users (name, email, password) VALUES ('test user', "
+        "'user@example.com', :password)",
+        password=argon2.hash_password(b"hunter2").decode(),
+    )
 
 
 def _test_success_response(response):
@@ -49,7 +62,7 @@ def _test_success_response(response):
         issuer=ISSUER,
         algorithms=[ALGORITHM],
     )
-    assert decoded["sub"] == "admin@example.com"
+    assert decoded["sub"] == "user@example.com"
     assert decoded["scope"] == scope.split(" ")
     assert approx(now, decoded["iat"], abs=1)
     assert approx(now, decoded["nbf"], abs=1)
@@ -77,11 +90,12 @@ def _test_error_response(json, headers):
     assert headers["cache-control"] == "no-store"
 
 
-def test_ropcf_success(client):
+def test_ropcf_success(client, sql):
+    _create_test_user(sql)
     response = client.post(
         "/api/oauth2/ropcf",
         {
-            "username": "admin@example.com",
+            "username": "user@example.com",
             "password": "hunter2",
             "grant_type": "password",
         },
@@ -94,7 +108,7 @@ def test_ropcf_incorrect_password(client):
     response = client.post(
         "/api/oauth2/ropcf",
         {
-            "username": "admin@example.com",
+            "username": "user@example.com",
             "password": "incorrect",
             "grant_type": "password",
         },
@@ -110,7 +124,7 @@ def test_ropcf_incorrect_email(client):
     response = client.post(
         "/api/oauth2/ropcf",
         {
-            "username": "admin@example.invalid",
+            "username": "user@example.invalid",
             "password": "password",
             "grant_type": "password",
         },
@@ -126,7 +140,7 @@ def test_ropcf_invalid_grant_type(client):
     response = client.post(
         "/api/oauth2/ropcf",
         {
-            "username": "admin@example.com",
+            "username": "user@example.com",
             "password": "password",
             "grant_type": "invalid",
         },
@@ -140,7 +154,7 @@ def test_ropcf_invalid_grant_type(client):
 
 def test_ropcf_missing_field(client):
     data_original = {
-        "username": "admin@example.com",
+        "username": "user@example.com",
         "password": "password",
         "grant_type": "password",
     }
@@ -172,7 +186,7 @@ def test_ropcf_wrong_origin(client):
     response = client.post(
         "/api/oauth2/ropcf",
         {
-            "username": "admin@example.com",
+            "username": "user@example.com",
             "password": "hunter2",
             "grant_type": "password",
         },
@@ -196,7 +210,7 @@ def test_refresh_expired_token(client):
     now = time()
     token = jwt.encode(
         {
-            "sub": "admin@example.com",
+            "sub": "user@example.com",
             "iat": now - EXPIRY - 3600,
             "nbf": now - EXPIRY - 3600,
             "exp": now - 3600,
@@ -225,7 +239,7 @@ def test_refresh_invalid_token(client):
     assert response.json()
 
 
-def test_refresh_not_invalid_auth(client):
+def test_refresh_invalid_auth(client):
     for authorization in (
         "",
         "Bearer",
