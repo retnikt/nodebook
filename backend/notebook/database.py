@@ -15,7 +15,7 @@ users = sqlalchemy.Table(
     "users",
     metadata,
     sqlalchemy.Column(
-        "id", UUID(True), primary_key=True, server_default=text("uuid_generate_v4()")
+        "id", UUID(False), primary_key=True, server_default=text("uuid_generate_v4()")
     ),
     sqlalchemy.Column("name", sqlalchemy.String, nullable=False),
     sqlalchemy.Column("email", sqlalchemy.String, nullable=False),
