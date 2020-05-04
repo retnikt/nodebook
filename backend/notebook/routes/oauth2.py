@@ -11,8 +11,13 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import ORJSONResponse
 
 from notebook import database
-from notebook.controllers.oauth2 import EXPIRY, create_jwt, oauth2_scheme, refresh, \
-    NO_CACHE_HEADERS
+from notebook.controllers.oauth2 import (
+    EXPIRY,
+    NO_CACHE_HEADERS,
+    create_jwt,
+    oauth2_scheme,
+    refresh,
+)
 from notebook.controllers.passwords import check_password
 from notebook.settings import settings
 
