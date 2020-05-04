@@ -109,7 +109,8 @@ def test_ropcf_success(client, sql):
     _test_success_response(response)
 
 
-def test_ropcf_incorrect_password(client):
+def test_ropcf_incorrect_password(client, sql):
+    _create_test_user(sql)
     response = client.post(
         "/api/oauth2/ropcf",
         {
@@ -125,7 +126,8 @@ def test_ropcf_incorrect_password(client):
     _test_error_response(json, response.headers)
 
 
-def test_ropcf_incorrect_email(client):
+def test_ropcf_incorrect_email(client, sql):
+    _create_test_user(sql)
     response = client.post(
         "/api/oauth2/ropcf",
         {
@@ -141,7 +143,8 @@ def test_ropcf_incorrect_email(client):
     _test_error_response(json, response.headers)
 
 
-def test_ropcf_invalid_grant_type(client):
+def test_ropcf_invalid_grant_type(client, sql):
+    _create_test_user(sql)
     response = client.post(
         "/api/oauth2/ropcf",
         {
@@ -157,7 +160,8 @@ def test_ropcf_invalid_grant_type(client):
     _test_error_response(json, response.headers)
 
 
-def test_ropcf_missing_field(client):
+def test_ropcf_missing_field(client, sql):
+    _create_test_user(sql)
     data_original = {
         "username": "user@example.com",
         "password": "password",
@@ -175,7 +179,8 @@ def test_ropcf_missing_field(client):
         _test_error_response(json, response.headers)
 
 
-def test_ropcf_wrong_content_type(client):
+def test_ropcf_wrong_content_type(client, sql):
+    _create_test_user(sql)
     response = client.post(
         "/api/oauth2/ropcf",
         "custom_data_here",
@@ -187,7 +192,8 @@ def test_ropcf_wrong_content_type(client):
     _test_error_response(json, response.headers)
 
 
-def test_ropcf_wrong_origin(client):
+def test_ropcf_wrong_origin(client, sql):
+    _create_test_user(sql)
     response = client.post(
         "/api/oauth2/ropcf",
         {
