@@ -48,6 +48,7 @@ class _Settings(BaseSettings):
     smtp_password: Optional[str] = None
     smtp_direct_tls: bool = False
     smtp_start_tls: bool = False
+    smtp_from: Optional[str] = None
 
     class Config:
         env_prefix: str = "notebook_"
