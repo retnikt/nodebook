@@ -1,6 +1,9 @@
 version: "3.8"
 services:
   backend:
+    build:
+      args:
+        DEV_DEPS: "true"
     volumes:
       # mount app directory to allow live-reloading
       - "./backend:/app"
