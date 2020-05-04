@@ -22,6 +22,22 @@ smtp = SMTP(
 )
 
 
+async def connect():
+    all(
+        (
+            settings.smtp_hostname,
+            settings.smtp_port,
+            settings.smtp_username,
+            settings.smtp_password,
+        )
+    ) and await smtp.connect()
+
+
+async def disconnect():
+    # noinspection PyStatementEffect
+    smtp.is_connected and await smtp.quit()
+
+
 @task
 async def send_message(to, subject, template, /, **values):
     message = MIMEMultipart()
