@@ -5,7 +5,6 @@ import jinja2
 from aiosmtplib import SMTP  # type: ignore
 
 from notebook.settings import settings
-from notebook.utils import task
 
 templates = jinja2.Environment(
     loader=jinja2.FileSystemLoader("templates/email"), autoescape=False,
@@ -38,7 +37,6 @@ async def disconnect():
     smtp.is_connected and await smtp.quit()
 
 
-@task
 async def send_message(to, subject, template, /, **values):
     message = MIMEMultipart()
     message["From"] = settings.smtp_from
