@@ -4,6 +4,8 @@ Revision ID: ${up_revision}
 Revises: ${down_revision | comma,n}
 Create Date: ${create_date}
 
+Copyright © retnikt <_@retnikt.uk> 2020
+This software is licensed under the MIT Licence: https://opensource.org/licenses/MIT
 """
 from alembic import op
 import sqlalchemy as sa

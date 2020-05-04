@@ -4,6 +4,8 @@ Revision ID: f2282c980d8e
 Revises: 0dbfe373e06d
 Create Date: 2020-05-04 07:35:21.979866
 
+Copyright © retnikt <_@retnikt.uk> 2020
+This software is licensed under the MIT Licence: https://opensource.org/licenses/MIT
 """
 from alembic import op
 

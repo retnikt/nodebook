@@ -4,6 +4,8 @@ Revision ID: 0dbfe373e06d
 Revises: 0beb1ed9a223
 Create Date: 2020-05-02 16:03:27.762750
 
+Copyright © retnikt <_@retnikt.uk> 2020
+This software is licensed under the MIT Licence: https://opensource.org/licenses/MIT
 """
 import sqlalchemy as sa
 

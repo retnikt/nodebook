@@ -4,6 +4,8 @@ Revision ID: f39843df4eca
 Revises:
 Create Date: 2020-05-01 14:38:38.240709
 
+Copyright © retnikt <_@retnikt.uk> 2020
+This software is licensed under the MIT Licence: https://opensource.org/licenses/MIT
 """
 import sqlalchemy
 
