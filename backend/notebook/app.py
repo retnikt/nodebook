@@ -6,6 +6,7 @@ from fastapi import HTTPException
 from fastapi.responses import ORJSONResponse
 
 from notebook.database import database
+from notebook.email import smtp
 from notebook.openapi import API
 from notebook.routes import router as api
 
@@ -16,8 +17,8 @@ app = API(
     docs_url=None,
     redoc_url=None,
     openapi_url="/api/openapi.json",
-    on_startup=[database.connect],
-    on_shutdown=[database.disconnect],
+    on_startup=[database.connect, smtp.connect],
+    on_shutdown=[database.disconnect, smtp.quit],
 )
 
 

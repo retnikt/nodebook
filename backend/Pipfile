@@ -28,6 +28,9 @@ pyjwt = ">=1.0.1"
 python-multipart = "*"
 alembic = "*"
 psycopg2 = "*"
+pyotp = "*"
+jinja2 = "*"
+aiosmtplib = "*"
 
 [requires]
 python_version = "3.8"
