@@ -1,0 +1,33 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+# retnikt/notebook - security.txt
+
+Canonical: https://github.com/retnikt/notebook/blob/master/security.txt
+
+# preferred: encrypted communication via keybase
+Contact: https://keybase.io/retnikt
+# alternative: email
+Contact: mailto:security@retnikt.uk
+
+# PGP public key
+Encryption: https://keybase.io/retnikt/pgp_keys.asc
+
+Preferred-Languages: en-GB-oxendict, en
+Policy: https://github.com/retnikt/notebook/blob/master/SECURITY.md
+-----BEGIN PGP SIGNATURE-----
+
+wsFcBAEBCAAQBQJer9rQCRBZGWSoQz6KIQAA+RQQAGUL5BP8AomJb47gNpd79bbc
+SmRH1uwj6EctCuy8IFKoxKy4cRUNXWGIhYU6/VqBiu1d1eZWVC6xegRzFbBIFJtV
+Vzsmmxdf0xXz8EwVLu5GgxXzjxcyTwqsjMyRzMQya0hB3KjFIXov+bLnlqPLy9bZ
+Fu4oZOGlMejaFGPB7Uf310xHNVn7VQm6slcdKPDL6VHdLEBjY3aWkIM/QUzdRSlJ
+3jOFn54LXdH+sKUIqvlSGz0Ol0TfNvtjOemH/9nDepBXcAiE2kCZocAmv/JBqJHk
+iPw83FlOd4KtK6v+6lvaCkwf6P/i8J46X+1ikmg8z0V2tKIYq4VHL41fWl8uzXN4
+FjvgYOmfOfJjhx7RO1oW/l6CYcInZ2slXEQUKp4sPJqjn0cFuvXBIog7PFHNqZtR
+znRP91vLDgOTu/EU2voL197ld9KBtZTaFAbSGCHhpRTBZ3khq9OHvrAPjTkWWCU+
+K4tDCsEZS/IfjIk3+UbYcvaOqljKyfZEld/eU2G9sonDXeG3NKEqXwcOjGCPyy8N
++AZXzgHrvbQAFrljaBqd1PI0NAba7Z4YXwHniLGHckaJJ6L+YxKjyoHfgZR+IZgn
+rGFKcyZBdprY/tn/TymOdXHhsHVzMsAq3+czIRXlAQlki7VWHqVJs/mISlwkwXOG
+/VcrSBb9iLb9kXnSb1Tu
+=xhJv
+-----END PGP SIGNATURE-----
