@@ -7,7 +7,9 @@ from aiosmtplib import SMTP  # type: ignore
 from notebook.settings import settings
 
 templates = jinja2.Environment(
-    loader=jinja2.FileSystemLoader("templates/email"), autoescape=False,
+    loader=jinja2.FileSystemLoader("templates/email"),
+    autoescape=False,
+    enable_async=True,
 )
 
 
