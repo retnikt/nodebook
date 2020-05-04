@@ -9,7 +9,7 @@ import argon2
 import jwt
 from pytest import approx
 
-from notebook.routes.oauth2 import ALGORITHM, AUDIENCE, EXPIRY, ISSUER
+from notebook.controllers.oauth2 import ALGORITHM, AUDIENCE, EXPIRY, ISSUER
 from notebook.settings import settings
 
 ASCII = set(range(0x20, 0x7F))

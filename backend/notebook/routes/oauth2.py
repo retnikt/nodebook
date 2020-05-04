@@ -5,66 +5,19 @@ This software is licensed under the MIT Licence: https://opensource.org/licenses
 import time
 from typing import Literal, Optional
 
-import jwt.exceptions  # type: ignore
+import jwt
 import pydantic
 from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.openapi.models import OAuthFlowPassword, OAuthFlows
 from fastapi.responses import ORJSONResponse
-from fastapi.security.oauth2 import OAuth2
 
 from notebook import database
+from notebook.controllers.oauth2 import EXPIRY, create_jwt, oauth2_scheme, refresh, \
+    NO_CACHE_HEADERS
 from notebook.controllers.passwords import check_password
 from notebook.settings import settings
 
-NO_CACHE_HEADERS = {"cache-control": "no-store", "pragma": "no-cache"}
-
-ALGORITHM = "HS256"
-
-ISSUER = "notebook"
-AUDIENCE = "notebook"
-
-WWW_AUTHENTICATE_HEADERS = {"www-authenticate": "Bearer"}
-
 router = APIRouter()
 
-# oauth2_scheme = OAuth2PasswordBearer("/api/oauth2/ropcf")
-
-
-class JWTScheme(OAuth2):
-    """JSON Web Token Authentication Scheme"""
-
-    description = "JSON Web Token Authentication Scheme"
-
-    def __init__(self):
-        super(JWTScheme, self).__init__(
-            auto_error=False,
-            flows=OAuthFlows(password=OAuthFlowPassword(tokenUrl="/api/oauth2/ropcf")),
-        )
-
-    async def __call__(self, request: Request):
-        header = await super(JWTScheme, self).__call__(request) or ""
-        token_type, _, token = header.partition(" ")
-        if token_type.casefold() != "bearer" or not token:
-            raise HTTPException(
-                401, "not authenticated", headers=WWW_AUTHENTICATE_HEADERS
-            )
-        try:
-            return jwt.decode(
-                token,
-                algorithms=[ALGORITHM],
-                key=settings.secret_key,
-                issuer=ISSUER,
-                audience=AUDIENCE,
-            )
-        except jwt.exceptions.ExpiredSignatureError as e:
-            raise HTTPException(403, "token expired", headers=NO_CACHE_HEADERS) from e
-        except jwt.exceptions.PyJWTError as e:
-            raise HTTPException(400, str(e), headers=NO_CACHE_HEADERS) from e
-
-
-oauth2_scheme = JWTScheme()
-
-EXPIRY = 86400
 
 EXAMPLE_JWT = jwt.encode(
     {
@@ -78,7 +31,6 @@ EXAMPLE_JWT = jwt.encode(
     },
     "example_key",
 ).decode()
-del now
 
 
 class OAuth2SuccessResponse(pydantic.BaseModel):
@@ -209,19 +161,7 @@ async def ropcf(request: Request, form: OAuth2ROPCFForm = oauth_2_ropcf_form):
     scope = ["user/read", "user/write"]
     return ORJSONResponse(
         {  # RFC 6749.5.1
-            "access_token": jwt.encode(  # RFC 7519
-                {
-                    "sub": form.email,
-                    "iat": (now := time.time()),
-                    "nbf": now,
-                    "exp": now + EXPIRY,
-                    "aud": AUDIENCE,
-                    "iss": ISSUER,
-                    "scope": scope,  # RFC 8693.4.2
-                },
-                key=settings.secret_key,
-                algorithm=ALGORITHM,
-            ).decode(),
+            "access_token": create_jwt(form, scope),
             "token_type": "bearer",
             "scope": " ".join(scope),  # RFC 6749.3.3
             "expires_in": EXPIRY,
@@ -232,12 +172,9 @@ async def ropcf(request: Request, form: OAuth2ROPCFForm = oauth_2_ropcf_form):
 
 @router.post("/refresh", response_model=OAuth2SuccessResponse, tags=["OAuth2"])
 async def refresh_token(token=Depends(oauth2_scheme)):
-    token.update({"iat": (now := time.time()), "nbf": now, "exp": now + EXPIRY})
     return ORJSONResponse(
         {
-            "access_token": jwt.encode(
-                token, key=settings.secret_key, algorithm=ALGORITHM
-            ).decode(),
+            "access_token": refresh(token),
             "token_type": "bearer",
             "scope": " ".join(token["scope"]),
             "expires_in": EXPIRY,
