@@ -8,8 +8,3 @@ from .oauth2 import router as auth
 
 router = APIRouter()
 router.include_router(auth, prefix="/oauth2")
-
-
-@router.get("/ping", response_model=str)
-async def ping() -> str:
-    return "pong!"
