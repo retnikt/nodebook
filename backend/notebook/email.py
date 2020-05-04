@@ -2,7 +2,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 import jinja2
-from aiosmtplib import SMTP
+from aiosmtplib import SMTP  # type: ignore
 
 from notebook.settings import settings
 from notebook.utils import task
