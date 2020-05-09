@@ -1,11 +1,12 @@
 import time
 
 import jwt.exceptions  # type: ignore
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 from fastapi.openapi.models import OAuthFlowPassword, OAuthFlows
 from fastapi.security import OAuth2
 from starlette.requests import Request
 
+from notebook import database
 from notebook.settings import settings
 
 ALGORITHM = "HS256"
@@ -71,3 +72,14 @@ def create_jwt(form, scope):
 def refresh(token: dict):
     token.update({"iat": (now := time.time()), "nbf": now, "exp": now + EXPIRY})
     return jwt.encode(token, key=settings.secret_key, algorithm=ALGORITHM).decode()
+
+
+async def requires(*scopes):
+    scopes_set = set(scopes)
+
+    @Depends
+    async def dependency(auth: oauth2_scheme = Depends()):
+        if scopes_set <= auth["scopes"]:
+            raise HTTPException(403, "forbidden")
+        return await database.database.execute(database.users.select().where(database.users.c.id == auth["sub"]))
+    return dependency
