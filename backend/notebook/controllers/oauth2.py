@@ -74,7 +74,7 @@ def refresh(token: dict):
     return jwt.encode(token, key=settings.secret_key, algorithm=ALGORITHM).decode()
 
 
-async def requires(*scopes):
+def requires(*scopes):
     scopes_set = set(scopes)
 
     @Depends
