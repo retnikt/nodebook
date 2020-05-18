@@ -7,7 +7,7 @@ verify_ssl = true
 pytest = "*"
 isort = {extras = ["pipfile"], version = "*"}
 mypy = "*"
-flake8 = "==3.8.0a2"  # needed for python 3.8 support
+flake8 = "==3.8.1"  # needed for python 3.8 support
 black = "*"
 hacking = "*"
 flake8-bugbear = "*"
