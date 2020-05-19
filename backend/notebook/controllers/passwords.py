@@ -42,7 +42,7 @@ def check_password_strength(password):
     return len(password) >= 10
 
 
-def change_password(password, user_id):
+async def change_password(password, user_id):
     assert len(password) <= 80
     hashed = password_hasher.hash(password)
     await database.database.execute(

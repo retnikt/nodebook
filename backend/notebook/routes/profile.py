@@ -17,7 +17,7 @@ class Profile(pydantic.BaseModel):
 
 
 @router.get("/", response_model=Profile)
-async def get_profile(user: requires("user/read")):
+async def get_profile(user=requires("user/read")):
     """gets the user's profile"""
     return {
         "email": user["email"],
@@ -27,7 +27,7 @@ async def get_profile(user: requires("user/read")):
 
 @router.put("/", response_model=Ok)
 async def update_profile(
-    user: requires("user/read", "user/write"),
+    user=requires("user/read", "user/write"),
     email: Optional[EmailStr] = None,
     name: Optional[str] = None,
 ):
@@ -50,7 +50,7 @@ async def update_profile(
 
 
 @router.delete("/", response_model=Ok)
-async def delete_profile(user: requires("user/read", "user/write", "user/delete")):
+async def delete_profile(user=requires("user/read", "user/write", "user/delete")):
     """deletes a user account"""
     await database.database.execute(
         database.users.delete().where(database.users.c.id == user["id"])
