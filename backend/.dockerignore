@@ -1,6 +1,5 @@
 .dockerignore
 .gitignore
-setup.cfg
 *.md
 
 scripts/
