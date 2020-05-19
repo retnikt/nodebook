@@ -5,6 +5,7 @@ This software is licensed under the MIT Licence: https://opensource.org/licenses
 import asyncio
 
 import argon2  # type: ignore
+from fastapi import HTTPException
 
 from notebook import database
 from notebook.settings import settings
@@ -34,3 +35,18 @@ async def rehash_password(user, password):
             .values(password=new_hash)
         )
         await database.database.execute(query)
+
+
+def check_password_strength(password):
+    # TODO better password strength requirements
+    return len(password) >= 10
+
+
+def change_password(password, user_id):
+    assert len(password) <= 80
+    hashed = password_hasher.hash(password)
+    await database.database.execute(
+        database.users.update()
+        .where(database.users.c.id == user_id)
+        .values(password=hashed)
+    )

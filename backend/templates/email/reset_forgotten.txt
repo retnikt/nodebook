@@ -1,0 +1,13 @@
+Hello,
+
+Someone requested to reset the password for your account ({email}).
+
+If this wasn't you, you can safely ignore this email.
+
+If this was you, use the link below to reset your password:
+
+{url}
+
+This link will expire in 24 hours.
+
+This email was sent automatically by Notebook. Replies will not be monitored.
