@@ -1,13 +1,13 @@
 import time
 
-import jwt.exceptions  # type: ignore
-from fastapi import HTTPException, Depends
+from fastapi import Depends, HTTPException
 from fastapi.openapi.models import OAuthFlowPassword, OAuthFlows
 from fastapi.security import OAuth2
-from starlette.requests import Request
 
+import jwt.exceptions  # type: ignore
 from notebook import database
 from notebook.settings import settings
+from starlette.requests import Request
 
 ALGORITHM = "HS256"
 ISSUER = "notebook"
@@ -81,5 +81,8 @@ def requires(*scopes):
     async def dependency(auth: oauth2_scheme = Depends()):
         if scopes_set <= auth["scopes"]:
             raise HTTPException(403, "forbidden")
-        return await database.database.execute(database.users.select().where(database.users.c.id == auth["sub"]))
+        return await database.database.execute(
+            database.users.select().where(database.users.c.id == auth["sub"])
+        )
+
     return dependency

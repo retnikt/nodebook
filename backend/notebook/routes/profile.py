@@ -1,12 +1,12 @@
 from typing import Optional
 
-import pydantic
 from fastapi import APIRouter
-from pydantic import EmailStr
 
+import pydantic
 from notebook import database
 from notebook.controllers.oauth2 import requires
 from notebook.utils import Ok
+from pydantic import EmailStr
 
 router = APIRouter()
 

@@ -1,9 +1,8 @@
 from email.mime.multipart import MIMEMultipart
 from unittest.mock import MagicMock
 
-import pytest
-
 import notebook.email
+import pytest
 
 
 def async_(f):

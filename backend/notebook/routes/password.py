@@ -1,16 +1,16 @@
 import secrets
 import time
 
-import jwt
 from fastapi import APIRouter, HTTPException
-from starlette.requests import Request
 
+import jwt
 from notebook import database
-from notebook.controllers.oauth2 import requires, ISSUER, AUDIENCE
+from notebook.controllers.oauth2 import AUDIENCE, ISSUER, requires
 from notebook.controllers.passwords import change_password, check_password_strength
+from notebook.email import send_message
 from notebook.settings import settings
 from notebook.utils import Ok
-from notebook.email import send_message
+from starlette.requests import Request
 
 EXPIRY = 86400  # 24 hours
 router = APIRouter()
