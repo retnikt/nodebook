@@ -37,7 +37,7 @@ async def rehash_password(user, password):
 
 
 def check_password_strength(password):
-    # TODO better password strength requirements
+    # TODO(retnikt) better password strength requirements
     return len(password) >= 10
 
 
