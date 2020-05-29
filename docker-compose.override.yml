@@ -18,3 +18,9 @@ services:
   db:
     ports:
       - "5432:5432"
+  frontend:
+    build:
+      dockerfile: dev.dockerfile
+    volumes:
+      - "./frontend:/app"
+ 

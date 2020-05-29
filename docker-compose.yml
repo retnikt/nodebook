@@ -30,5 +30,13 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
       - POSTGRES_USER=notebook
     env_file: .env
+
+  frontend:
+    build:
+      context: ./frontend
+    env_file: .env
+    labels:
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+
 volumes:
   db:
