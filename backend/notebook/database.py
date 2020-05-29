@@ -11,6 +11,7 @@ from notebook.settings import settings
 
 metadata = sqlalchemy.MetaData()
 database = Database(settings.dsn, force_rollback=settings.force_rollback)
+
 users = sqlalchemy.Table(
     "users",
     metadata,
@@ -20,4 +21,11 @@ users = sqlalchemy.Table(
     sqlalchemy.Column("name", sqlalchemy.String, nullable=False),
     sqlalchemy.Column("email", sqlalchemy.String, nullable=False, unique=True),
     sqlalchemy.Column("password", sqlalchemy.String, nullable=False),
+)
+
+jtis = sqlalchemy.Table(
+    "jtis",
+    metadata,
+    sqlalchemy.Column("jti", sqlalchemy.String, nullable=False, primary_key=True),
+    sqlalchemy.Column("expiry", sqlalchemy.DateTime, nullable=False),
 )
