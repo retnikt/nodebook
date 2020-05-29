@@ -1,12 +1,11 @@
 from typing import Optional
 
+import pydantic
 from fastapi import APIRouter
 
-import pydantic
 from notebook import database
 from notebook.controllers.oauth2 import requires
-from notebook.utils import Ok
-from pydantic import EmailStr
+from notebook.utils import EmailStr, Ok
 
 router = APIRouter()
 
@@ -25,7 +24,7 @@ async def get_profile(user=requires("user/read")):
     }
 
 
-@router.put("/", response_model=Ok)
+@router.put("/", response_model=Ok)  # type: ignore
 async def update_profile(
     user=requires("user/read", "user/write"),
     email: Optional[EmailStr] = None,
@@ -49,7 +48,7 @@ async def update_profile(
     return "ok"
 
 
-@router.delete("/", response_model=Ok)
+@router.delete("/", response_model=Ok)  # type: ignore
 async def delete_profile(user=requires("user/read", "user/write", "user/delete")):
     """deletes a user account"""
     await database.database.execute(

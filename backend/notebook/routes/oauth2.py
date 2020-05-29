@@ -5,11 +5,11 @@ This software is licensed under the MIT Licence: https://opensource.org/licenses
 import time
 from typing import Literal, Optional
 
+import jwt
+import pydantic
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import ORJSONResponse
 
-import jwt
-import pydantic
 from notebook import database
 from notebook.controllers.oauth2 import (
     EXPIRY,

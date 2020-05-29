@@ -4,9 +4,8 @@ This software is licensed under the MIT Licence: https://opensource.org/licenses
 """
 import asyncio
 
-from fastapi import HTTPException
-
 import argon2  # type: ignore
+
 from notebook import database
 from notebook.settings import settings
 

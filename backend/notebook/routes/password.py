@@ -1,22 +1,22 @@
 import secrets
 import time
 
-from fastapi import APIRouter, HTTPException
-
 import jwt
+from fastapi import APIRouter, HTTPException
+from starlette.requests import Request
+
 from notebook import database
 from notebook.controllers.oauth2 import AUDIENCE, ISSUER, requires
 from notebook.controllers.passwords import change_password, check_password_strength
 from notebook.email import send_message
 from notebook.settings import settings
 from notebook.utils import Ok
-from starlette.requests import Request
 
 EXPIRY = 86400  # 24 hours
 router = APIRouter()
 
 
-@router.put("/", response_model=Ok)
+@router.put("/", response_model=Ok)  # type: ignore
 async def change(
     password: str, user=requires("user/read", "user/write", "user/password")
 ):
@@ -31,7 +31,7 @@ async def change(
     return "ok"
 
 
-@router.post("/forgot", response_model=Ok)
+@router.post("/forgot", response_model=Ok)  # type: ignore
 async def forgot(email: str, request: Request):
     """sends an email to reset a forgotten password"""
     if user := await database.database.execute(
@@ -60,7 +60,7 @@ async def forgot(email: str, request: Request):
     return "ok"
 
 
-@router.post("/reset", response_model=Ok)
+@router.post("/reset", response_model=Ok)  # type: ignore
 async def reset(token: str, password: str):
     try:
         data = jwt.decode(token, algorithms=[], key=settings.secret_key)
