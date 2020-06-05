@@ -14,6 +14,7 @@ flake8-bugbear = "*"
 coverage = "*"
 sqlalchemy-stubs = "*"
 pytest-asyncio = "*"
+pydevd = "*"
 
 [packages]
 fastapi = "*"

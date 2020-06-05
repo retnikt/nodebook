@@ -2,6 +2,8 @@
 Copyright © retnikt <_@retnikt.uk> 2020
 This software is licensed under the MIT Licence: https://opensource.org/licenses/MIT
 """
+import sys
+
 from fastapi import HTTPException
 from fastapi.responses import ORJSONResponse
 
@@ -14,6 +16,7 @@ __all__ = ["app"]
 
 
 app = API(
+    debug="--debug" in sys.argv[1:],
     docs_url=None,
     redoc_url=None,
     openapi_url="/api/openapi.json",

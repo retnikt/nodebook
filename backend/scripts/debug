@@ -1,0 +1,12 @@
+#!/bin/sh
+HOST_IP="$(ip -4 r l 0/0 | cut -d\  -f 3)"
+pydevd \
+  --port "${PYDEVD_PORT:-4567}" \
+  --client "$HOST_IP" \
+  --file uvicorn \
+    --debug \
+    --reload \
+    --port=80 \
+    --host=0.0.0.0 \
+    notebook:app \
+      --debug

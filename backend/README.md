@@ -3,6 +3,11 @@ The backend is written in [Python](https://python.org) using [FastAPI](https://f
 
 To get started, run `docker-compose up -d`. This will start all necessary containers, and the server will reload automatically when you make changes to the code, because the code is mounted as a Host volume. You can then access the backend API at http://localhost/api.
 
+Development and running outside Docker is not supported and will not work. All shell scripts in the `scripts/` folder should only be used inside the container.
+
+You can run the app with a [pydevd](https://github.com/fabioz/PyDev.Debugger) debug
+server (running on your host) attached by editing `docker-compose.override.yml` to change the container command. The debugger will use port 4567 by default, or customisably in the `$PYDEVD_PORT` environment variable. `pydevd` is supported by major IDEs including Visual Studio Code and JetBrains PyCharm.
+
 There is automatically generated API documentation using Swagger UI at http://localhost/api/docs.
 
 Note that if you make changes to the project requirements (see Pipfile) or Dockerfile, the changes will not be reflected until you run `docker-compose up -d --build`.
@@ -13,7 +18,7 @@ Note that if you make changes to the project requirements (see Pipfile) or Docke
 - `notebook/` - the root Python package of the backend API
 - `scripts/` - contains useful scripts for development
 - `setup.cfg` - contains configuration for tooling and packaging
-- `Dockerfile` - the Docker file for the backend API
+- `Dockerfile` - the Dockerfile for the backend API
 - `Pipfile` - contains information about the project's requirements (see https://pipenv.pypa.io/)
 - `Pipfile.lock` - contains file integrity information about dependencies (see https://pipenv.pypa.io/)
 
@@ -32,14 +37,13 @@ Pull-requests may be closed silently if you have obviously not followed these ru
 
 Two scripts, `scripts/check` and `scripts/format`, are provided for respectively veriying and attempting to automatically correct the code style. Please run both before committing and fix any problems. (see also [Testing](#testing))
 
-<!--
 # Testing
-Unit testing is done with [pytest](https://pytest.org). The `scripts/test` script will run all tests automatically for you. Please ensure all tests pass before committing, and add tests for new features and bug fixes to prevent regressions.
+Unit testing is done with [pytest](https://pytest.org). The `scripts/tests_coverage` script will run all tests automatically for you. Please ensure all tests pass before committing, and add tests for new features and bug fixes to prevent regressions.
 
-Coverage is done with [coverage.py](https://coverage.readthedocs.io/en/latest/); running it is included as part of the `scripts/test` script.
+Coverage is done with [coverage.py](https://coverage.readthedocs.io/en/latest/); running it is included as part of the `scripts/tests_coverage` script.
 
-TODO(retnikt) uncomment and add tests!
--->
+If you wish to debug the tests, you can use `scripts/tests_debug`. Due to limitations of
+Python, you cannot use a debugger and coverage.py at the same time.
 
 # Documentation
 Documentation for end-users should be either in the root project [README](../README.md) if it is particularly notable, or the GitHub Wiki.

@@ -1,0 +1,8 @@
+#!/bin/sh
+uvicorn \
+  --debug \
+  --reload \
+  --port=80 \
+  --host=0.0.0.0 \
+  notebook:app \
+    --debug

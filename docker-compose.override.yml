@@ -7,14 +7,10 @@ services:
     volumes:
       # mount app directory to allow live-reloading
       - "./backend:/app"
-    command:
-      # run with uvicorn with reload instead of gunicorn with workers
-      - "uvicorn"
-      - "--reload"
-      - "--port=80"
-      - "--host=0.0.0.0"
-      - "notebook:app"
-      - "--debug"
+    user: "${RUN_AS:-0}"
+    # change locally to `/app/scripts/debug` if you want to connect a pydevd debugger.
+    # Set the pydevd port in the environment variable `$PYDEVD_PORT`. (default: 4567)
+    command: "/app/scripts/run"
   db:
     ports:
       - "5432:5432"
@@ -23,4 +19,4 @@ services:
       dockerfile: dev.dockerfile
     volumes:
       - "./frontend:/app"
- 
+    user: "${RUN_AS:-0}"

@@ -8,6 +8,7 @@ import os
 import pytest
 import starlette.testclient
 
+
 os.environ["NOTEBOOK_FORCE_ROLLBACK"] = "true"
 
 
