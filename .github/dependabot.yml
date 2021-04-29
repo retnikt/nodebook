@@ -1,0 +1,33 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/backend"
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 10
+  reviewers:
+  - retnikt
+  assignees:
+  - retnikt
+  allow:
+  - dependency-type: direct
+  - dependency-type: indirect
+  ignore:
+  - dependency-name: pydevd
+    versions:
+    - 2.2.0
+    - 2.3.0
+    - 2.4.0
+  - dependency-name: pytest
+    versions:
+    - 6.2.1
+    - 6.2.2
+  - dependency-name: mypy
+    versions:
+    - "0.800"
+  - dependency-name: regex
+    versions:
+    - 2020.11.13
+  - dependency-name: more-itertools
+    versions:
+    - 8.6.0
